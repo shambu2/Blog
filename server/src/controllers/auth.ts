@@ -2,6 +2,9 @@ import  { Request, Response } from "express"
 import { User } from "../models/index.model";
 import bcrypt from "bcrypt";
 import { sendOTP } from "../utils/mailer";
+// import { Jwt } from "jsonwebtoken";
+import jwt from "jsonwebtoken"
+const JWT_SECRET = process.env.JWT_SECRET || 'SECRET'
 
 export const registerPost = async(req:Request,res:Response)=>{
     const {email,name,password} = req.body;
@@ -45,16 +48,45 @@ export const verifyPost = async(req:Request,res:Response)=>{
     return res.status(200).json({message: 'Account verified successfully,Please login with your password'});
 }
 
+export const loginPost = async(req:Request,res:Response)=>{
+    const {email,password} = req.body;
 
-
-
-
-
-
-
-export const loginPost = (req:Request,res:Response)=>{
-    res.json('hello login')
+    if(!email || !password){
+        return res.status(400).json({message:'Enter valid credentials'})
+    }
+    const user = await User.findOne({email});
+    if(!user){
+        return res.status(400).json({message: 'User does not exist'})
+    }
+    const comparedPassword = await bcrypt.compareSync(password,user.password);
+    if(!comparedPassword) return res.status(400).json({message: ' Enter correct password'})
+    
+    const token =  jwt.sign({id:user._id.toString()},JWT_SECRET,{
+        expiresIn: '25d',
+    });
+    
+    res.cookie('token',token,{
+        httpOnly: true,
+        secure: false,
+        sameSite: 'strict',
+        maxAge: 25 * 24 * 60 * 60 * 1000,
+    })
+    return res.status(200).json({message:'Login successful'})
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 export const meGet = (req:Request,res:Response)=>{
     res.json('hello me')
 }
