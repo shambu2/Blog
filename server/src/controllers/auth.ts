@@ -9,6 +9,15 @@ interface UserPayload {
   email: string;
   name: string;
 }
+
+// declare global {
+//   namespace Express {
+//     interface Request {
+//       userId?: string;
+//     }
+//   }
+// }
+
 // interface AuthenticatedRequest extends Request{
 //     userId: string;
 // }
@@ -84,7 +93,7 @@ export const loginPost = async (req: Request, res: Response) => {
     sameSite: "strict",
     maxAge: 25 * 24 * 60 * 60 * 1000,
   });
-  return res.status(200).json({ message: "Login successful" });
+  return res.status(200).json({ message: `Login successful ${user} `});
 };
 
 export const meGet = async (req: Request, res: Response) => {
@@ -96,7 +105,9 @@ export const meGet = async (req: Request, res: Response) => {
     const decoded = jwt.verify(token, JWT_SECRET) as UserPayload;
 
     const Id = decoded.id;
-
+    // const ids = Id.toString();
+    // req.userId = "12fgsd" 
+    //  req.userId = "234gfd"
     if (!Id) return res.status(401).json({ message: "Unauthorized" });
 
     const user = await User.findById(Id);
@@ -118,6 +129,7 @@ export const logoutPost = (req: Request, res: Response) => {
       secure: false,
       sameSite: "strict",
     });
+    
     return res.status(200).json({ message: "Logged out successfully" });
   } catch (error) {
     return res.status(500).json({error:"Error occured while logout"})
