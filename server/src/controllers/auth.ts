@@ -112,5 +112,14 @@ export const meGet = async (req: Request, res: Response) => {
 };
 
 export const logoutPost = (req: Request, res: Response) => {
-  res.json("hello logout");
+  try {
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: false,
+      sameSite: "strict",
+    });
+    return res.status(200).json({ message: "Logged out successfully" });
+  } catch (error) {
+    return res.status(500).json({error:"Error occured while logout"})
+  }
 };
