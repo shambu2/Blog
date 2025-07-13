@@ -1,5 +1,7 @@
 import express from "express"
 import { loginPost, logoutPost, meGet, registerPost, verifyPost } from "../controllers/auth";
+// import { requireAuth } from "../middlewares/authMiddleware";
+// import { requireAuth } from "../middlewares/authMiddleware";
 const router = express.Router()
 
 router.get('/',(req,res)=>{
