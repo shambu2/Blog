@@ -1,3 +1,4 @@
+import axios from 'axios'
 import React, { useState } from 'react'
 
 const Login = () => {
@@ -14,10 +15,22 @@ const Login = () => {
         })
       }
     
-      const handleSubmit = (e: React.FormEvent) => {
+      const handleSubmit = async(e: React.FormEvent) => {
         e.preventDefault()
         console.log("Form submitted:", formData)
         // Handle form submission here
+
+        try {
+          const res = await axios.post("http://localhost:5000/api/v1/auth/login",
+            formData,
+            {
+              withCredentials: true
+            }
+          )
+        } catch (error) {
+          
+        }
+
       }
   return (
        <div className="min-h-screen bg-gray-50 flex">

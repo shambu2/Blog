@@ -17,6 +17,7 @@ function App() {
           <Route index element={<Home />} />
           <Route path="/:id" element={<Posts />} />
           <Route path="/new" element={<NewPost />} />
+          <Route path="/profile" element={<NewPost />} />
         </Route>
 
         <Route path="/login" element={<Login />} />

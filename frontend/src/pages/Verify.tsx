@@ -1,11 +1,19 @@
+import axios from 'axios'
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+
+interface RegisterResponse {
+  message?: string;
+  error?: string;
+}
 
 const Verify = () => {
     const [formData, setFormData] = useState({
-            username: "",
             email: "",
-            password: "",
+            otp: "",
           })
+
+          const navigate = useNavigate();
         
           const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
             setFormData({
@@ -14,10 +22,22 @@ const Verify = () => {
             })
           }
         
-          const handleSubmit = (e: React.FormEvent) => {
+          const handleSubmit = async(e: React.FormEvent) => {
             e.preventDefault()
             console.log("Form submitted:", formData)
             // Handle form submission here
+            try {
+              const res = await axios.post<RegisterResponse>("http://localhost:5000/api/v1/auth/verify",
+                formData,
+                {
+                  withCredentials: true
+                }
+              )
+              console.log(res.data?.message)
+              navigate('/')
+            } catch (error) {
+              alert("unable to verify")
+            }
           }
   return (
     <div className="min-h-screen bg-gray-50 flex">
@@ -59,10 +79,10 @@ const Verify = () => {
                   OTP
                 </label>
                 <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  value={formData.password}
+                  id="otp"
+                  name="otp"
+                  type="text"
+                  value={formData.otp}
                   onChange={handleChange}
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-black focus:border-black"
                   required
